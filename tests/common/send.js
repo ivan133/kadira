@@ -1,8 +1,10 @@
+import { Meteor } from 'meteor/meteor';
+
 Tinytest.add(
   'Kadira Send - Kadira._getSendFunction',
   function (test) {
-    var func = Kadira._getSendFunction();
-    if(Meteor.isServer) {
+    const func = Kadira._getSendFunction();
+    if (Meteor.isServer) {
       test.equal(func, Kadira._serverSend);
     } else {
       test.equal(func, Kadira._clientSend);
@@ -13,12 +15,12 @@ Tinytest.add(
 Tinytest.addAsync(
   'Kadira Send - send data',
   function (test, done) {
-    var endPoint = 'http://localhost:8808/echo';
-    var payload = {aa: 10};
-    var func = Kadira._getSendFunction();
-    func(endPoint, payload, function(err, res) {
+    const endPoint = 'http://localhost:8808/echo';
+    const payload = { aa: 10 };
+    const func = Kadira._getSendFunction();
+    func(endPoint, payload, (err, res) => {
       test.equal(err, null);
-      test.equal(res, {echo: payload});
+      test.equal(res, { echo: payload });
       done();
     });
   }
@@ -27,12 +29,12 @@ Tinytest.addAsync(
 Tinytest.addAsync(
   'Kadira Send - Kadira.send with path',
   function (test, done) {
-    var payload = {aa: 10};
-    var newKadiraOptions = {endpoint: 'http://localhost:8808'};
-    withKadiraOptions(newKadiraOptions, function() {
-      Kadira.send(payload, '/echo', function(err, data) {
+    const payload = { aa: 10 };
+    const newKadiraOptions = { endpoint: 'http://localhost:8808' };
+    withKadiraOptions(newKadiraOptions, function () {
+      Kadira.send(payload, '/echo', function (err, data) {
         test.equal(err, null);
-        test.equal(data, {echo: payload});
+        test.equal(data, { echo: payload });
         done();
       });
     });
@@ -42,26 +44,26 @@ Tinytest.addAsync(
 Tinytest.addAsync(
   'Kadira Send - Kadira.send with path (but no begining slash)',
   function (test, done) {
-    var payload = {aa: 10};
-    var newKadiraOptions = {endpoint: 'http://localhost:8808'};
-    withKadiraOptions(newKadiraOptions, function() {
-      Kadira.send(payload, 'echo', function(err, data) {
+    const payload = { aa: 10 };
+    const newKadiraOptions = { endpoint: 'http://localhost:8808' };
+    withKadiraOptions(newKadiraOptions, function () {
+      Kadira.send(payload, 'echo', function (err, data) {
         test.equal(err, null);
-        test.equal(data, {echo: payload});
+        test.equal(data, { echo: payload });
         done();
       });
     });
   }
 );
 
-if(Meteor.isServer) {
+if (Meteor.isServer) {
   Tinytest.addAsync(
     'Kadira Send - Kadira.send - accepting server errors',
     function (test, done) {
-      var payload = {aa: 10};
-      var newKadiraOptions = {endpoint: 'http://localhost:8808'};
-      withKadiraOptions(newKadiraOptions, function() {
-        Kadira.send(payload, 'non-exisiting-route', function(err, data) {
+      const payload = { aa: 10 };
+      const newKadiraOptions = { endpoint: 'http://localhost:8808' };
+      withKadiraOptions(newKadiraOptions, function () {
+        Kadira.send(payload, 'non-exisiting-route', function (err) {
           test.equal(err.reason, 'internal-error-here');
           test.equal(err.error, 400);
           done();
@@ -72,8 +74,8 @@ if(Meteor.isServer) {
 }
 
 function withKadiraOptions(options, f) {
-  var orginalOptions = Kadira.options;
+  const orginalOptions = Kadira.options;
   Kadira.options = options;
   f();
   Kadira.options = orginalOptions;
-};
+}

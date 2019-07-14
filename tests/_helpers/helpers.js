@@ -1,25 +1,28 @@
-var Future = Npm.require('fibers/future');
+import Future from 'fibers/future';
+import { Meteor } from 'meteor/meteor';
+import { Random } from 'meteor/random';
+import { MethodStore, TestData } from './globals';
 
-GetMeteorClient = function (_url) {
-  var url = _url || Meteor.absoluteUrl();
-  return DDP.connect(url, {retry: false});
+export function getMeteorClient(url = Meteor.absoluteUrl()) {
+  return DDP.connect(url, { retry: false });
 }
 
-RegisterMethod = function (F) {
-  var id = 'test_' + Random.id();
-  var methods = {};
-  methods[id] = F;
+export function registerMethod(F) {
+  const id = 'test_' + Random.id();
+  const methods = {
+    [id]: F
+  };
   Meteor.methods(methods);
   return id;
 }
 
-RegisterPublication = function (F) {
-  var id = 'test_' + Random.id();
+export function registerPublication(F) {
+  const id = 'test_' + Random.id();
   Meteor.publish(id, F);
   return id;
 }
 
-EnableTrackingMethods = function () {
+export function enableTrackingMethods() {
   // var original = Kadira.models.methods.processMethod;
   // Kadira.models.methods.processMethod = function(method) {
   //   MethodStore.push(method);
@@ -27,42 +30,45 @@ EnableTrackingMethods = function () {
   // };
 }
 
-GetLastMethodEvents = function (_indices) {
+export function getLastMethodEvents(_indices) {
   if (MethodStore.length < 1) return [];
-  var indices = _indices || [0];
-  var events = MethodStore[MethodStore.length - 1].events;
+
+  const indices = _indices || [0];
+
+  let events = MethodStore[MethodStore.length - 1].events;
   events = Array.prototype.slice.call(events, 0);
   events = events.filter(isNotCompute);
   events = events.map(filterFields);
-  return events;
 
-  function isNotCompute (event) {
+  function isNotCompute(event) {
     return event[0] !== 'compute';
   }
 
-  function filterFields (event) {
-    var filteredEvent = [];
-    indices.forEach(function (index) {
+  function filterFields(event) {
+    const filteredEvent = [];
+    indices.forEach((index) => {
       if (event[index]) filteredEvent[index] = event[index];
     });
     return filteredEvent;
   }
+
+  return events;
 }
 
-GetPubSubMetrics = function () {
-  var metricsArr = [];
-  for(var dateId in Kadira.models.pubsub.metricsByMinute) {
+export function getPubSubMetrics() {
+  const metricsArr = [];
+  for (const dateId of Object.keys(Kadira.models.pubsub.metricsByMinute)) {
     metricsArr.push(Kadira.models.pubsub.metricsByMinute[dateId]);
   }
   return metricsArr;
 }
 
-FindMetricsForPub = function (pubname) {
-  var metrics = GetPubSubMetrics();
-  var candidates = [];
-  for(var lc=0; lc < metrics.length; lc++) {
-    var pm = metrics[lc].pubs[pubname];
-    if(pm) {
+export function findMetricsForPub(pubname) {
+  const metrics = getPubSubMetrics();
+  const candidates = [];
+  for (let lc = 0; lc < metrics.length; lc++) {
+    const pm = metrics[lc].pubs[pubname];
+    if (pm) {
       candidates.push(pm);
     }
   }
@@ -70,12 +76,12 @@ FindMetricsForPub = function (pubname) {
   return candidates[candidates.length - 1];
 }
 
-GetPubSubPayload = function (detailInfoNeeded) {
+export function getPubSubPayload(detailInfoNeeded) {
   return Kadira.models.pubsub.buildPayload(detailInfoNeeded).pubMetrics;
 }
 
-Wait = function (time) {
-  var f = new Future();
+export function wait(time) {
+  const f = new Future();
   Meteor.setTimeout(function () {
     f.return();
   }, time);
@@ -83,50 +89,50 @@ Wait = function (time) {
   return;
 }
 
-CleanTestData = function () {
-  MethodStore = [];
+export function cleanTestData() {
+  if (MethodStore.length) {
+    MethodStore.splice(0, MethodStore.length);
+  }
   TestData.remove({});
-  Kadira.models.pubsub.metricsByMinute
-  Kadira.models.pubsub.metricsByMinute = {};
-  Kadira.models.pubsub.subscriptions = {};
+  Kadira.models.pubsub.metricsByMinute = Object.create(null);
+  Kadira.models.pubsub.subscriptions = Object.create(null);
 }
 
-SubscribeAndWait = function(client, name, args) {
-  var f = new Future();
-  var args = Array.prototype.splice.call(arguments, 1);
+export function subscribeAndwait(client, ...args) {
+  const f = new Future();
+
   args.push({
-    onError: function(err) {
+    onError: function (err) {
       f.return(err);
     },
-    onReady: function() {
+    onReady: function () {
       f.return();
     }
   });
 
-  var handler = client.subscribe.apply(client, args);
-  var error = f.wait();
+  const handler = client.subscribe(...args);
+  const error = f.wait();
 
-  if(error) {
+  if (error) {
     throw error;
   } else {
     return handler;
   }
-};
+}
 
-CompareNear = function(v1, v2, maxDifference) {
-  maxDifference = maxDifference || 30;
-  var diff = Math.abs(v1 - v2);
+export function compareNear(v1, v2, maxDifference = 30) {
+  const diff = Math.abs(v1 - v2);
   return diff < maxDifference;
-};
+}
 
-CloseClient = function(client) {
-  var sessionId = client._lastSessionId;
+export function closeClient(client) {
+  const sessionId = client._lastSessionId;
   client.disconnect();
-  var f = new Future();
+  const f = new Future();
   function checkClientExtence(sessionId) {
-    var sessionExists = Meteor.server.sessions.has(sessionId);
-    if(sessionExists) {
-      setTimeout(function() {
+    const sessionExists = Meteor.server.sessions.has(sessionId);
+    if (sessionExists) {
+      setTimeout(function () {
         checkClientExtence(sessionId);
       }, 20);
     } else {
@@ -135,14 +141,14 @@ CloseClient = function(client) {
   }
   checkClientExtence(sessionId);
   return f.wait();
-};
+}
 
-WithDocCacheGetSize = function(fn, patchedSize){
-  var original = Kadira.docSzCache.getSize
-  Kadira.docSzCache.getSize = function(){return patchedSize}
+export function withDocCacheGetSize(fn, patchedSize) {
+  const original = Kadira.docSzCache.getSize;
+  Kadira.docSzCache.getSize = function () { return patchedSize; };
   try {
     fn();
   } finally {
-    Kadira.docSzCache.getSize = original
+    Kadira.docSzCache.getSize = original;
   }
 }

@@ -1,13 +1,18 @@
 ## Kadira - Performance Monitoring for Meteor
-This project is based on the [Kadira](https://github.com/meteorhacks/kadira) without jQuery dependency.
+This project is based on the [Kadira](https://github.com/lmachens/kadira) without jQuery dependency.
 
 If you are looking for the kadira server, take a look at [meteor apm server](https://github.com/lmachens/meteor-apm-server).
+
+### Why another one?
+1) remove legacy code
+2) ES6
+3) Meteor 1.8.1+
 
 ### Getting started
 
 1. Create an account in Meteor APM or Kadira
 2. From the UI, create an app. You'll get an `AppId` and an `AppSecret`.
-3. Run `meteor add lmachens:kadira` in your project
+3. Run `meteor add afrokick:kadira` in your project
 4. Configure your Meteor app with the `AppId` and `AppSecret` by adding the following code snippet to a `server/kadira.js` file:
 
 ```js

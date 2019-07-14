@@ -1,151 +1,150 @@
 Package.describe({
   summary: 'Performance Monitoring for Meteor',
-  version: '2.31.0',
+  version: '2.32.0',
   git: 'https://github.com/afrokick/kadira.git',
   name: 'afrokick:kadira',
 });
 
-const npmModules = {
-  debug: '0.7.4',
+Npm.depends({
+  'debug': '0.7.4',
   'kadira-core': '1.3.2',
-  pidusage: '1.0.1',
+  'pidusage': '1.0.1',
   'evloop-monitor': '0.1.0',
-  pidusage: '0.1.1',
   'lru-cache': '4.0.0',
   'json-stringify-safe': '5.0.1',
-};
+});
 
-Npm.depends(npmModules);
-
-Package.on_use(function (api) {
+Package.onUse((api) => {
   configurePackage(api);
   api.export(['Kadira']);
 });
 
-Package.on_test(function (api) {
+Package.onTest((api) => {
   configurePackage(api);
   api.use(['tinytest', 'test-helpers'], ['client', 'server']);
 
   // common before
-  api.add_files(['tests/models/base_error.js'], ['client', 'server']);
+  api.addFiles(['tests/common/models/baseErrorModel.js', 'tests/common/ntp.js'], ['client', 'server']);
 
   // common server
-  api.add_files(
+  api.addFiles(
     [
-      'tests/utils.js',
-      'tests/ntp.js',
-      'tests/jobs.js',
+      'tests/server/utils.js',
+      'tests/server/jobs.js',
       'tests/_helpers/globals.js',
       'tests/_helpers/helpers.js',
       'tests/_helpers/init.js',
-      'tests/ping.js',
-      'tests/hijack/info.js',
-      'tests/hijack/user.js',
-      'tests/hijack/email.js',
-      'tests/hijack/base.js',
-      'tests/hijack/async.js',
-      'tests/hijack/http.js',
-      'tests/hijack/db.js',
-      'tests/hijack/subscriptions.js',
-      'tests/hijack/error.js',
-      'tests/models/methods.js',
-      'tests/models/pubsub.js',
-      'tests/models/system.js',
-      'tests/models/errors.js',
-      'tests/tracer/tracer_store.js',
-      'tests/tracer/tracer.js',
-      'tests/tracer/default_filters.js',
-      'tests/check_for_oplog.js',
-      'tests/error_tracking.js',
-      'tests/wait_time_builder.js',
-      'tests/hijack/set_labels.js',
-      'tests/environment_variables.js',
-      'tests/docsize_cache.js',
+      'tests/server/ping.js',
+      'tests/server/hijack/info.js',
+      'tests/server/hijack/user.js',
+      'tests/server/hijack/email.js',
+      'tests/server/hijack/base.js',
+      'tests/server/hijack/async.js',
+      'tests/server/hijack/http.js',
+      'tests/server/hijack/db.js',
+      'tests/server/hijack/subscriptions.js',
+      'tests/server/hijack/error.js',
+      'tests/server/models/methodsModel.js',
+      'tests/server/models/pubsubModel.js',
+      'tests/server/models/systemModel.js',
+      'tests/server/models/errorModel.js',
+      'tests/server/tracer/tracerStore.js',
+      'tests/server/tracer/tracer.js',
+      'tests/server/checkForOplog.js',
+      'tests/server/errorTracking.js',
+      'tests/server/waitTimeBuilder.js',
+      'tests/server/hijack/setLabels.js',
+      'tests/server/environmentVariables.js',
+      'tests/server/docSizeCache.js',
     ],
     'server'
   );
 
   // common client
-  api.add_files(
+  api.addFiles(
     [
       'tests/client/utils.js',
-      'tests/client/error_tracking.js',
-      'tests/client/models/error.js',
-      'tests/client/error_reporters/window_error.js',
-      'tests/client/error_reporters/zone.js',
-      'tests/client/error_reporters/meteor_debug.js',
+      'tests/client/errorTracking.js',
+      'tests/client/models/errorModel.js',
+      'tests/client/errorReporters/windowError.js',
+      'tests/client/errorReporters/zone.js',
+      'tests/client/errorReporters/meteorDebug.js',
     ],
     'client'
   );
 
   // common after
-  api.add_files(['tests/common/default_error_filters.js', 'tests/common/send.js'], ['client', 'server']);
+  api.addFiles(['tests/common/defaultErrorFilters.js', 'tests/common/send.js'], ['client', 'server']);
 });
 
 function configurePackage(api) {
   api.versionsFrom('METEOR@1.8.1');
-  api.use('lamhieu:meteorx@2.0.1', ['server']);
+
+  api.use(['ecmascript', 'http', 'random', 'underscore', 'retry'], ['client', 'server']);
+  api.use('lamhieu:meteorx@2.0.1', 'server');
   api.use('meteorhacks:zones@1.2.1', { weak: true });
 
-  api.use(['minimongo', 'livedata', 'mongo-livedata', 'ejson', 'ddp-common', 'underscore', 'http', 'email', 'random'], ['server']);
-  api.use(['underscore', 'random', 'http', 'localstorage'], ['client']);
+  api.use(['minimongo', 'livedata', 'mongo-livedata', 'ejson', 'ddp-common', 'email'], 'server');
+  api.use(['localstorage'], 'client');
 
   // common before
-  api.add_files(['lib/common/unify.js', 'lib/models/base_error.js'], ['client', 'server']);
+  api.addFiles(
+    [
+      'lib/common/unify.js',
+      'lib/common/utils.js',
+      'lib/common/models/baseErrorModel.js',
+      'lib/common/ntp.js'
+    ], ['client', 'server']);
 
   // only server
-  api.add_files(
+  api.addFiles(
     [
-      'lib/jobs.js',
-      'lib/retry.js',
-      'lib/utils.js',
-      'lib/ntp.js',
-      'lib/wait_time_builder.js',
-      'lib/check_for_oplog.js',
-      'lib/tracer/tracer.js',
-      'lib/tracer/default_filters.js',
-      'lib/tracer/tracer_store.js',
-      'lib/models/0model.js',
-      'lib/models/methods.js',
-      'lib/models/pubsub.js',
-      'lib/models/system.js',
-      'lib/models/errors.js',
-      'lib/docsize_cache.js',
-      'lib/kadira.js',
-      'lib/hijack/wrap_server.js',
-      'lib/hijack/wrap_session.js',
-      'lib/hijack/wrap_subscription.js',
-      'lib/hijack/wrap_observers.js',
-      'lib/hijack/wrap_ddp_stringify.js',
-      'lib/hijack/instrument.js',
-      'lib/hijack/db.js',
-      'lib/hijack/http.js',
-      'lib/hijack/email.js',
-      'lib/hijack/async.js',
-      'lib/hijack/error.js',
-      'lib/hijack/set_labels.js',
-      'lib/environment_variables.js',
-      'lib/auto_connect.js',
+      'lib/server/jobs.js',
+      'lib/server/utils.js',
+      'lib/server/waitTimeBuilder.js',
+      'lib/server/checkForOplog.js',
+      'lib/server/tracer/tracer.js',
+      'lib/server/tracer/tracerStore.js',
+      'lib/server/models/kadiraModel.js',
+      'lib/server/models/methodsModel.js',
+      'lib/server/models/pubsubModel.js',
+      'lib/server/models/systemModel.js',
+      'lib/server/models/errorModel.js',
+      'lib/server/docSizeCache.js',
+      'lib/server/kadira.js',
+      'lib/server/hijack/wrappers/wrapServer.js',
+      'lib/server/hijack/wrappers/wrapSession.js',
+      'lib/server/hijack/wrappers/wrapSubscription.js',
+      'lib/server/hijack/wrappers/wrapObservers.js',
+      'lib/server/hijack/wrappers/wrapDDPStringify.js',
+      'lib/server/hijack/wrappers/index.js',
+      'lib/server/hijack/instrument.js',
+      'lib/server/hijack/db.js',
+      'lib/server/hijack/http.js',
+      'lib/server/hijack/email.js',
+      'lib/server/hijack/async.js',
+      'lib/server/hijack/error.js',
+      'lib/server/hijack/setLabels.js',
+      'lib/server/environmentVariables.js',
+      'lib/server/autoConnect.js',
     ],
     'server'
   );
 
   // only client
-  api.add_files(
+  api.addFiles(
     [
-      'lib/retry.js',
-      'lib/ntp.js',
       'lib/client/utils.js',
-      'lib/client/models/error.js',
-      'lib/client/error_reporters/zone.js',
-      'lib/client/error_reporters/window_error.js',
-      'lib/client/error_reporters/meteor_debug.js',
+      'lib/client/models/errorModel.js',
+      'lib/client/errorReporters/zone.js',
+      'lib/client/errorReporters/windowError.js',
+      'lib/client/errorReporters/meteorDebug.js',
       'lib/client/kadira.js',
     ],
     'client'
   );
 
-  api.add_files(
+  api.addFiles(
     [
       // It's possible to remove this file after some since this just contains
       // a notice to the user.
@@ -156,5 +155,5 @@ function configurePackage(api) {
   );
 
   // common after
-  api.add_files(['lib/common/default_error_filters.js', 'lib/common/send.js'], ['client', 'server']);
+  api.addFiles(['lib/common/defaultErrorFilters.js', 'lib/common/send.js'], ['client', 'server']);
 }
