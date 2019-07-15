@@ -144,14 +144,15 @@ Tinytest.add(
   function (test) {
     cleanTestData();
     enableTrackingMethods();
+    wait(100);
     const client = getMeteorClient();
     const h1 = subscribeAndwait(client, 'tinytest-data');
-    wait(100);
+    wait(500);
     h1.stop();
-    wait(100);
-    const metrics = findMetricsForPub('tinytest-data');
-    test.isTrue(compareNear(metrics.observerLifetime, 100));
     closeClient(client);
+    wait(500);
+    const metrics = findMetricsForPub('tinytest-data');
+    test.isTrue(compareNear(metrics.observerLifetime, 500, 100));
   }
 );
 
