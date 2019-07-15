@@ -1,5 +1,17 @@
 # Changelog
 
+### v2.32.0
+
+#### BREAKING CHANGES
+* Convert to ES6;
+* Fix Meteor 1.8.1+ issues (changed api in meteor) and upgrade min supported version of Meteor to 1.8.1.
+
+#### Other
+* Fix all tests;
+* Ignore ping/pong messages in msg size stats.
+
+**NOTE:** I'll release a 3.0.0 version after check the code in production.
+
 ### v2.31.0
 
 * Fix MeteorX dependency. See [#3](https://github.com/lmachens/kadira/pull/3).Thx @KoenLav.
