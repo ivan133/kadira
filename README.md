@@ -1,4 +1,6 @@
 ## Kadira - Performance Monitoring for Meteor
+[![Build Status](https://travis-ci.org/afrokick/kadira.svg?branch=master)](https://travis-ci.org/afrokick/kadira)
+
 This project is based on the [Kadira](https://github.com/lmachens/kadira) without jQuery dependency.
 
 If you are looking for the kadira server, take a look at [meteor apm server](https://github.com/lmachens/meteor-apm-server).
