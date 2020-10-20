@@ -1,6 +1,6 @@
 Package.describe({
   summary: 'Performance Monitoring for Meteor',
-  version: '2.32.0',
+  version: '2.32.1',
   git: 'https://github.com/afrokick/kadira.git',
   name: 'afrokick:kadira',
 });
@@ -78,13 +78,13 @@ Package.onTest((api) => {
 });
 
 function configurePackage(api) {
-  api.versionsFrom('METEOR@1.8.1');
+  api.versionsFrom('METEOR@1.11');
 
   api.use(['ecmascript', 'http', 'random', 'underscore', 'retry'], ['client', 'server']);
   api.use('lamhieu:meteorx@2.1.1', 'server');
   api.use('meteorhacks:zones@1.2.1', { weak: true });
 
-  api.use(['minimongo', 'livedata', 'mongo-livedata', 'ejson', 'ddp-common', 'email'], 'server');
+  api.use(['minimongo', 'livedata', 'mongo-livedata', 'ejson', 'ddp-common', 'email@1.0.0||2.0.0-beta||2.0.0'], 'server');
   api.use(['localstorage'], 'client');
 
   // common before
