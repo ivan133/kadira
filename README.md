@@ -1,7 +1,10 @@
 ## Kadira - Performance Monitoring for Meteor
 [![Build Status](https://travis-ci.org/afrokick/kadira.svg?branch=master)](https://travis-ci.org/afrokick/kadira)
 
-This project is based on the [Kadira](https://github.com/lmachens/kadira) without jQuery dependency.
+The main difference is that I have to use montiapm:meteorx and http@2
+
+This project is based on the [Kadira](https://github.com/afrokick/kadira) without jQuery dependency.
+
 
 If you are looking for the kadira server, take a look at [meteor apm server](https://github.com/lmachens/meteor-apm-server).
 
@@ -31,7 +34,7 @@ Now you can deploy your application and it will send information to Kadira. Wait
 Your app can connect to Kadira using environment variables or using [`Meteor.settings`](http://docs.meteor.com/#meteor_settings).
 
 #### Using Meteor.settings
-Use the followng `settings.json` file with your app:
+Use the following `settings.json` file with your app:
 
 ```js
 {
