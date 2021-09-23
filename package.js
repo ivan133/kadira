@@ -81,7 +81,7 @@ function configurePackage(api) {
   api.versionsFrom('METEOR@1.11');
 
   api.use(['ecmascript', 'http@2.0.0', 'random', 'underscore', 'retry'], ['client', 'server']);
-  api.use('lamhieu:meteorx@2.1.1', 'server');
+  api.use('montiapm:meteorx', 'server');
   api.use('meteorhacks:zones@1.2.1', { weak: true });
 
   api.use(['minimongo', 'livedata', 'mongo-livedata', 'ejson', 'ddp-common', 'email@1.0.0||2.0.0-beta||2.0.0'], 'server');
