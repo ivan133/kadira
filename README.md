@@ -1,7 +1,7 @@
 ## Kadira - Performance Monitoring for Meteor
 [![Build Status](https://travis-ci.org/afrokick/kadira.svg?branch=master)](https://travis-ci.org/afrokick/kadira)
 
-The main difference is that I have to use montiapm:meteorx and http@2
+The main difference is that I have to use montiapm:meteorx and http@2 to make it compatible with METEOR@2.3
 
 This project is based on the [Kadira](https://github.com/afrokick/kadira) without jQuery dependency.
 
